@@ -36,5 +36,19 @@ for (const file of eventFiles) {
 	}
 }
 
+global.utcVCs = new Map()
+global.VCGenerators = new Map()
+global.tempVCs = new Map()
+async function updateUTCVoiceChannel() {
+    console.log("updating utc vc...")
+    const currentTime = new Date().toUTCString().substring(17,22)
+    for (guild of global.utcVCs.entries()) {
+        for (channel of guild[1]) {
+            await channel.edit({ name: currentTime + " UTC updated" })
+            .catch(console.error);
+        }
+    }
+}
+setInterval(updateUTCVoiceChannel, 10*1000); // 5 minutes worth of milliseconds
 
 process.env.DEBUG == "true" ? client.login(devToken) : client.login(prodToken);

@@ -5,19 +5,25 @@ module.exports = {
       .setName('createutcvc')
       .setDescription('This command creates a locked voice channel that displays the current UTC time.')
       .setDefaultMemberPermissions(PermissionFlagsBits.Administrator) // only admins can use this command
-     .setDMPermission(false), // cant create voice chats in dms
+      .setDMPermission(false), // cant create voice chats in dms
     async execute(interaction) {
       // Discord only gives us 3 seconds to acknowledge an interaction before
       // the interaction gets voided and can't be used anymore.
       await interaction.reply({
-        content: 'Creating channel...',
+        content: '🫡',
       });
 
       try {
         const currentTime = new Date().toUTCString().substring(17,22)
-        let everyoneRole = interaction.guild.roles.cache.find(r => r.name === '@everyone');
         // Now create the channel in the server.
-        channel = await interaction.guild.channels.create({
+        if (global.utcVCs === undefined)
+          global.utcVCs = new Map()
+  
+        if (global.utcVCs.get(interaction.guild.id) === undefined)
+          global.utcVCs.set(interaction.guild.id, [])
+        
+        var newChannels = global.utcVCs.get(interaction.guild.id) 
+        newChannels.push(await interaction.guild.channels.create({
           name: currentTime + " UTC", // The name of the channel
           type: ChannelType.GuildVoice,
           permissionOverwrites: [
@@ -26,15 +32,8 @@ module.exports = {
               deny: [PermissionsBitField.Flags.Connect],
             }
          ],
-        });
-
-
-        async function updateUTCVoiceChannel(vc) {
-          const currentTime = new Date().toUTCString().substring(17,22)
-          await vc.edit({ name: currentTime + " UTC" })
-          .catch(console.error);
-        }
-        setInterval(updateUTCVoiceChannel, 60*5*1000, [channel]); // 5 minutes worth of milliseconds
+        }))
+        global.utcVCs.set(interaction.guild.id, newChannels);
       } catch (error) {
         console.log(error);
         await interaction.editReply({
