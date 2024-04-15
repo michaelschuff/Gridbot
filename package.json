@@ -1,0 +1,25 @@
+{
+  "name": "gridbot",
+  "version": "1.0.0",
+  "description": "A Discord bot and logger for the guild Gridlocke in Albion Online",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/michaelschuff/Gridbot.git"
+  },
+  "keywords": [
+    "Albion"
+  ],
+  "author": "Michael Schuff",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/michaelschuff/Gridbot/issues"
+  },
+  "homepage": "https://github.com/michaelschuff/Gridbot#readme",
+  "dependencies": {
+    "discord.js": "^14.14.1"
+  }
+}
