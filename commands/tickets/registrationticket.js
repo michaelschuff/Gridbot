@@ -15,9 +15,10 @@ module.exports = {
         //     option.setName('Description')
         //         .setDescription('Descripitiony')),
     async execute(interaction) {
-        await interaction.reply({
+        const reply = await interaction.reply({
           content: '🫡',
         });
+        reply.delete()
         const role = interaction.options.getRole('role');
         const applyButton = new ButtonBuilder()
             .setCustomId('apply now')

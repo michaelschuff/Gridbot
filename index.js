@@ -105,4 +105,4 @@ async function update() {
 
 
 }
-setInterval(update, 10*1000); // 5 minutes worth of milliseconds
+setInterval(update, 5*60*1000); // 5 minutes worth of milliseconds
