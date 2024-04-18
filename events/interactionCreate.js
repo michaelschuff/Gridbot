@@ -34,6 +34,10 @@ module.exports = {
                 
                 
                 await channel.send({ embeds: [applicationEmbed], components: [row] });
+                await channel.send("<@" + interaction.member.user.id + ">");
+                if (!(global.ticketGenerators.get(interaction.message.id) === undefined)) {
+                    await channel.send("<@&" + global.ticketGenerators.get(interaction.message.id) + ">");
+                }
             }
 
             if (interaction.customId == 'close ticket') {

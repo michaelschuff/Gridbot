@@ -37,21 +37,25 @@ for (const file of eventFiles) {
 }
 
 
-fs.readFile("global.json", (error, data) => {
+fs.readFile(process.env.DEBUG == "true" ? "global_dev.json" : "global.json", (error, data) => {
     if (error) {
         global.utcVCs = new Map()
         global.VCGenerators = new Map()
         global.tempVCs = new Map()
+        global.ticketGenerators = new Map()
+        console.log("Could not read persistant data file: " + process.env.DEBUG == "true" ? "global_dev.json" : "global.json")
     } else {
         const parsedData = JSON.parse(data, reviver);
 
-        global.utcVCs = parsedData.utcVCs;
-        global.VCGenerators = parsedData.VCGenerators;
-        global.tempVCs = parsedData.tempVCs;
+        global.utcVCs = parsedData.utcVCs === undefined ? new Map() : parsedData.utcVCs;
+        global.VCGenerators = parsedData.VCGenerators === undefined ? new Map() : parsedData.VCGenerators;
+        global.tempVCs = parsedData.tempVCs === undefined ? new Map() : parsedData.tempVCs;
+        global.ticketGenerators = parsedData.ticketGenerators === undefined ? new Map() : parsedData.ticketGenerators;
+        console.log(parsedData.ticketGenerators)
     }
     
 })
- 
+console.log(global.ticketGenerators)
 process.env.DEBUG == "true" ? client.login(devToken) : client.login(prodToken);
 
 
@@ -88,19 +92,18 @@ async function update() {
         utcVCs: global.utcVCs,
         VCGenerators: global.VCGenerators,
         tempVCs: global.tempVCs,
+        ticketGenerators: global.ticketGenerators,
     }
     const data = JSON.stringify(obj, replacer)
     
-    fs.writeFile("global.json", data, (error) => {
+    
+    fs.writeFile(process.env.DEBUG == "true" ? "global_dev.json" : "global.json", data, (error) => {
     if (error) {
         console.error(error);
         throw error;
     }
-
-    console.log("data.json written correctly");
-    console.log(global.VCGenerators)
 });
 
 
 }
-setInterval(update, 60*5*1000); // 5 minutes worth of milliseconds
+setInterval(update, 10*1000); // 5 minutes worth of milliseconds

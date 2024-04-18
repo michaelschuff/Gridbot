@@ -4,8 +4,12 @@ module.exports = {
         .setName('createapplicationticketgen')
         .setDescription('This command creates a registration ticket message in the channel it is used in')
         .setDefaultMemberPermissions(PermissionFlagsBits.Administrator) // only admins can use this command
-        .setDMPermission(false), // cant create voice chats in dms
+        .setDMPermission(false) // cant create voice chats in dms
+        .addRoleOption(option =>
+            option.setName('role')
+                .setDescription('What role handles these tickets?')),
     async execute(interaction) {
+        const role = interaction.options.getRole('role');
         const applyButton = new ButtonBuilder()
             .setCustomId('apply now')
             .setLabel('Apply Now')
@@ -21,6 +25,8 @@ module.exports = {
             .setDescription('Click the button to open a ticket')
         
         
-        await interaction.channel.send({ embeds: [applicationEmbed], components: [row] });
+        const message = await interaction.channel.send({ embeds: [applicationEmbed], components: [row] });
+
+        global.ticketGenerators.set(message.id, role.id)
     }
 };
