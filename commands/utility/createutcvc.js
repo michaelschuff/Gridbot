@@ -15,15 +15,12 @@ module.exports = {
 
       try {
         const currentTime = new Date().toUTCString().substring(17,22)
-        // Now create the channel in the server.
-        if (global.utcVCs === undefined)
-          global.utcVCs = new Map()
   
         if (global.utcVCs.get(interaction.guild.id) === undefined)
           global.utcVCs.set(interaction.guild.id, [])
         
         var newChannels = global.utcVCs.get(interaction.guild.id) 
-        newChannels.push(await interaction.guild.channels.create({
+        const newCh = await interaction.guild.channels.create({
           name: currentTime + " UTC", // The name of the channel
           type: ChannelType.GuildVoice,
           permissionOverwrites: [
@@ -32,7 +29,8 @@ module.exports = {
               deny: [PermissionsBitField.Flags.Connect],
             }
          ],
-        }))
+        });
+        newChannels.push(newCh)
         global.utcVCs.set(interaction.guild.id, newChannels);
       } catch (error) {
         console.log(error);

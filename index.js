@@ -51,11 +51,9 @@ fs.readFile(process.env.DEBUG == "true" ? "global_dev.json" : "global.json", (er
         global.VCGenerators = parsedData.VCGenerators === undefined ? new Map() : parsedData.VCGenerators;
         global.tempVCs = parsedData.tempVCs === undefined ? new Map() : parsedData.tempVCs;
         global.ticketGenerators = parsedData.ticketGenerators === undefined ? new Map() : parsedData.ticketGenerators;
-        console.log(parsedData.ticketGenerators)
     }
     
 })
-console.log(global.ticketGenerators)
 process.env.DEBUG == "true" ? client.login(devToken) : client.login(prodToken);
 
 
@@ -83,7 +81,8 @@ async function update() {
     const currentTime = new Date().toUTCString().substring(17,22)
     for (guild of global.utcVCs.entries()) {
         for (channel of guild[1]) {
-            await channel.edit({ name: currentTime + " UTC" })
+            channel.guild.channels.fetch(channel.id)
+            .then(ch => ch.setName(currentTime + " UTC"))
             .catch(console.error);
         }
     }
