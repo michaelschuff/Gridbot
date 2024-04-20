@@ -9,12 +9,6 @@ module.exports = {
         .addRoleOption(option =>
             option.setName('role')
                 .setDescription('What role handles these tickets?')),
-        // .addStringOption(option =>
-        //     option.setName('Title')
-        //         .setDescription('Title to display'))
-        // .addStringOption(option =>
-        //     option.setName('Description')
-        //         .setDescription('Descripitiony')),
     async execute(interaction) {
         const reply = await interaction.reply({
           content: '🫡',

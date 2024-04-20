@@ -1,4 +1,4 @@
-const { Events, ActionRowBuilder, EmbedBuilder, ButtonBuilder, ButtonStyle, ChannelType } = require('discord.js');
+const { Events, ActionRowBuilder, EmbedBuilder, ButtonBuilder, ButtonStyle, ChannelType, PermissionsBitField } = require('discord.js');
 
 module.exports = {
 	name: Events.InteractionCreate,
@@ -14,11 +14,35 @@ module.exports = {
                     category = await interaction.guild.channels.create({
                         name: "applications", 
                         type: ChannelType.GuildCategory,
+                        permissionOverwrites: [
+                            {
+                                id: interaction.guild.roles.everyone.id,
+                                deny: [PermissionsBitField.Flags.ViewChannel],
+                            },
+                            {
+                                id: global.ticketGenerators.get(interaction.message.id),
+                                allow: [PermissionsBitField.Flags.ViewChannel],
+                            },
+                        ],
                     });
                 }
                 const channel = await category.children.create({
                     name: interaction.member.user.username + "'s application'",
-                    type: ChannelType.GuildText
+                    type: ChannelType.GuildText,
+                    permissionOverwrites: [
+                        {
+                            id: interaction.guild.roles.everyone.id,
+                            deny: [PermissionsBitField.Flags.ViewChannel],
+                        },
+                        {
+                            id: interaction.user.id,
+                            allow: [PermissionsBitField.Flags.ViewChannel],
+                        },
+                        {
+                            id: global.ticketGenerators.get(interaction.message.id),
+                            allow: [PermissionsBitField.Flags.ViewChannel],
+                        },
+                    ],
                 })
 
                 const applyButton = new ButtonBuilder()
@@ -54,11 +78,35 @@ module.exports = {
                     category = await interaction.guild.channels.create({
                         name: "regears", 
                         type: ChannelType.GuildCategory,
+                        permissionOverwrites: [
+                            {
+                                id: interaction.guild.roles.everyone.id,
+                                deny: [PermissionsBitField.Flags.ViewChannel],
+                            },
+                            {
+                                id: global.ticketGenerators.get(interaction.message.id),
+                                allow: [PermissionsBitField.Flags.ViewChannel],
+                            },
+                        ],
                     });
                 }
                 const channel = await category.children.create({
                     name: interaction.member.user.username + "'s regear'",
-                    type: ChannelType.GuildText
+                    type: ChannelType.GuildText,
+                    permissionOverwrites: [
+                        {
+                            id: interaction.guild.roles.everyone.id,
+                            deny: [PermissionsBitField.Flags.ViewChannel],
+                        },
+                        {
+                            id: interaction.user.id,
+                            allow: [PermissionsBitField.Flags.ViewChannel],
+                        },
+                        {
+                            id: global.ticketGenerators.get(interaction.message.id),
+                            allow: [PermissionsBitField.Flags.ViewChannel],
+                        },
+                    ],
                 })
 
                 const applyButton = new ButtonBuilder()
