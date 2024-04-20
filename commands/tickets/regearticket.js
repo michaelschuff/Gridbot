@@ -1,4 +1,5 @@
 const { ActionRowBuilder, EmbedBuilder, ButtonBuilder, ButtonStyle, SlashCommandBuilder, PermissionFlagsBits, ChannelType, PermissionsBitField  } = require('discord.js');
+const { SaveGlobals } = require('./../../Global.js');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('regearticketgen')
