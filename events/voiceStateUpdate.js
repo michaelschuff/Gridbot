@@ -31,7 +31,8 @@ module.exports = {
                         break;
                     }
                 }
-            } else if (newState.channelId != null) {
+            } 
+            if (newState.channelId != null) {
 
                 if (global.VCGenerators.get(newState.guild.id) === undefined) {
                     global.VCGenerators.set(newState.guild.id, [])
