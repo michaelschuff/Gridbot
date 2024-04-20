@@ -63,7 +63,7 @@ async function update() {
     const currentTime = new Date().toUTCString().substring(17,22)
     for (guild of global.utcVCs.entries()) {
         for (channel of guild[1]) {
-            const ch = await channel.guild.channels.fetch(channel.id)
+            const ch = await(await client.guilds.fetch(guild[0]).channels.fetch(channel.id))
             ch.setName(currentTime + " UTC")
         }
     }
