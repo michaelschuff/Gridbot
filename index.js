@@ -2,6 +2,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { Client, Collection, GatewayIntentBits } = require('discord.js');
 const { devToken, prodToken } = require('./config.json');
+const { replacer, reviver, SaveGlobals} = require("./Global.js");
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates] });
 
@@ -51,31 +52,12 @@ fs.readFile(process.env.DEBUG == "true" ? "global_dev.json" : "global.json", (er
         global.VCGenerators = parsedData.VCGenerators === undefined ? new Map() : parsedData.VCGenerators;
         global.tempVCs = parsedData.tempVCs === undefined ? new Map() : parsedData.tempVCs;
         global.ticketGenerators = parsedData.ticketGenerators === undefined ? new Map() : parsedData.ticketGenerators;
+        SaveGlobals();
     }
     
 })
+
 process.env.DEBUG == "true" ? client.login(devToken) : client.login(prodToken);
-
-
-function replacer(key, value) {
-    if(value instanceof Map) {
-        return {
-            dataType: 'Map',
-            value: Array.from(value.entries()), // or with spread: value: [...value]
-        };
-    } else {
-        return value;
-    }
-}
-
-function reviver(key, value) {
-    if(typeof value === 'object' && value !== null) {
-        if (value.dataType === 'Map') {
-            return new Map(value.value);
-        }
-    }
-    return value;
-}
 
 async function update() {
     const currentTime = new Date().toUTCString().substring(17,22)
@@ -87,22 +69,6 @@ async function update() {
         }
     }
 
-    const obj = {
-        utcVCs: global.utcVCs,
-        VCGenerators: global.VCGenerators,
-        tempVCs: global.tempVCs,
-        ticketGenerators: global.ticketGenerators,
-    }
-    const data = JSON.stringify(obj, replacer)
-    
-    
-    fs.writeFile(process.env.DEBUG == "true" ? "global_dev.json" : "global.json", data, (error) => {
-    if (error) {
-        console.error(error);
-        throw error;
-    }
-});
-
-
+    SaveGlobals()
 }
 setInterval(update, 5*60*1000); // 5 minutes worth of milliseconds

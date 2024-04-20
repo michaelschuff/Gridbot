@@ -38,5 +38,6 @@ module.exports = {
         const message = await interaction.channel.send({ embeds: [applicationEmbed], components: [row] });
 
         global.ticketGenerators.set(message.id, role.id)
+        SaveGlobals();
     }
 };

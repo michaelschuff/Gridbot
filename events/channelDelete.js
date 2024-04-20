@@ -1,4 +1,5 @@
 const { Events } = require('discord.js');
+const { SaveGlobals} = require("./../Global.js");
 
 module.exports = {
 	name: Events.ChannelDelete,
@@ -44,6 +45,8 @@ module.exports = {
                 global.tempVCs.set(channel.guild.id, channels)
             }
         }
+
+        SaveGlobals();
 
 		
 	},

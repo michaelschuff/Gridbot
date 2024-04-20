@@ -1,4 +1,6 @@
 const { SlashCommandBuilder, PermissionFlagsBits, ChannelType, PermissionsBitField  } = require('discord.js');
+const { SaveGlobals } = require('./../../Global.js')
+
 module.exports = {
     emoji: '🔈',
     data: new SlashCommandBuilder()
@@ -21,8 +23,10 @@ module.exports = {
       const name = interaction.options.getString('name')
 
       try {
-        if (global.VCGenerators.get(interaction.guild.id) === undefined)
+        if (global.VCGenerators.get(interaction.guild.id) === undefined) {
           global.VCGenerators.set(interaction.guild.id, [])
+          SaveGlobals();
+        }
         
         var newChannels = global.VCGenerators.get(interaction.guild.id) 
         newChannels.push(await interaction.guild.channels.create({
@@ -30,6 +34,7 @@ module.exports = {
           type: ChannelType.GuildVoice
         }))
         global.VCGenerators.set(interaction.guild.id, newChannels);
+        SaveGlobals();
       } catch (error) {
         console.log(error);
         await interaction.editReply({
