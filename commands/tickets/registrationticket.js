@@ -1,18 +1,20 @@
 const { ActionRowBuilder, EmbedBuilder, ButtonBuilder, ButtonStyle, SlashCommandBuilder, PermissionFlagsBits, ChannelType, PermissionsBitField  } = require('discord.js');
-const { SaveGlobals } = require('./../../Global.js');
+const { SaveData, getGuildData, setGuildData } = require("./../../database/loader.js");
+const { TicketFactoryData } = require("./../../database/TicketFactoryData.js");
+
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('registrationticketgen')
         .setDescription('This command creates a registration ticket message in the channel it is used in')
         .setDefaultMemberPermissions(PermissionFlagsBits.Administrator) // only admins can use this command
         .setDMPermission(false) // cant create voice chats in dms
-        .addRoleOption(option =>
-            option.setName('role')
-                .setDescription('What role handles these tickets?')),
+        .addRoleOption(option => option
+            .setName('role')
+            .setDescription('What role handles these tickets?')),
     async execute(interaction) {
-        const reply = await interaction.reply({
-          content: '🫡',
-          ephemeral: true
+        await interaction.reply({
+            content: '🫡',
+            ephemeral: true
         });
         const role = interaction.options.getRole('role');
         const applyButton = new ButtonBuilder()
@@ -32,7 +34,17 @@ module.exports = {
         
         const message = await interaction.channel.send({ embeds: [applicationEmbed], components: [row] });
 
-        global.ticketGenerators.set(message.id, role.id)
-        SaveGlobals();
+        var buttonMap = new Map();
+        buttonMap.set('apply now', [role.id])
+
+        var newMap = new Map();
+        newMap.set("id", this.id);
+        newMap.set("ticketManagers",buttonMap);
+
+        var guildData = getGuildData(interaction.guild.id);
+        guildData.ticketFactories.set(message.id, new TicketFactoryData(newMap))
+        setGuildData(interaction.guild.id, guildData);
+
+        SaveData();
     }
 };

@@ -1,4 +1,5 @@
 const { Events, ActionRowBuilder, EmbedBuilder, ButtonBuilder, ButtonStyle, ChannelType, PermissionsBitField } = require('discord.js');
+const { getGuildData, setGuildData } = require("./../database/loader.js");
 
 module.exports = {
 	name: Events.InteractionCreate,
@@ -6,9 +7,13 @@ module.exports = {
         if (interaction.isButton()) {
             if (interaction.customId == 'apply now') {
                 await interaction.reply({
-                  content: '🫡',
-                  ephemeral: true
+                    content: '🫡',
+                    ephemeral: true
                 });
+
+                var guildData = getGuildData(interaction.guild.id);
+                const ticketFactoryData = guildData.ticketFactories.get(interaction.message.id);
+
                 var category = interaction.guild.channels.cache.find(channel => channel.type == ChannelType.GuildCategory && channel.name == "applications");
                 if (!category) {
                     category = await interaction.guild.channels.create({
@@ -18,30 +23,27 @@ module.exports = {
                             {
                                 id: interaction.guild.roles.everyone.id,
                                 deny: [PermissionsBitField.Flags.ViewChannel],
-                            },
-                            {
-                                id: global.ticketGenerators.get(interaction.message.id),
+                            },{
+                                id: ticketFactoryData.ticketManagers.get(interaction.customId)[0], // could ping multiple roles, just ping one.
                                 allow: [PermissionsBitField.Flags.ViewChannel],
-                            },
+                            }
                         ],
                     });
                 }
                 const channel = await category.children.create({
-                    name: interaction.member.user.username + "'s application'",
+                    name: interaction.member.nickname + "'s application'",
                     type: ChannelType.GuildText,
                     permissionOverwrites: [
                         {
                             id: interaction.guild.roles.everyone.id,
                             deny: [PermissionsBitField.Flags.ViewChannel],
-                        },
-                        {
+                        }, {
                             id: interaction.user.id,
                             allow: [PermissionsBitField.Flags.ViewChannel],
-                        },
-                        {
-                            id: global.ticketGenerators.get(interaction.message.id),
+                        }, {
+                            id: ticketFactoryData.ticketManagers.get(interaction.customId)[0], // could ping multiple roles, just ping one.
                             allow: [PermissionsBitField.Flags.ViewChannel],
-                        },
+                        }
                     ],
                 })
 
@@ -63,17 +65,21 @@ module.exports = {
                 
                 await channel.send({ embeds: [applicationEmbed], components: [row] });
                 await channel.send("<@" + interaction.member.user.id + ">");
-                if (!(global.ticketGenerators.get(interaction.message.id) === undefined)) {
-                    await channel.send("<@&" + global.ticketGenerators.get(interaction.message.id) + ">");
+                if (!(guildData.ticketFactories.get(interaction.message.id) === undefined)) {
+                    await channel.send("<@&" + ticketFactoryData.ticketManagers.get(interaction.customId) + ">");
                 }
             }
 
             if (interaction.customId == 'regear request') {
                 await interaction.reply({
-                  content: '🫡',
-                  ephemeral: true
+                    content: '🫡',
+                    ephemeral: true
                 });
-                var category = interaction.guild.channels.cache.find(channel => channel.name == "regears" && channel.type == ChannelType.GuildCategory);
+
+                var guildData = getGuildData(interaction.guild.id);
+
+                const ticketFactoryData = guildData.ticketFactories.get(interaction.message.id);
+                var category = interaction.guild.channels.cache.find(channel => channel.type == ChannelType.GuildCategory && channel.name == "regears");
                 if (!category) {
                     category = await interaction.guild.channels.create({
                         name: "regears", 
@@ -82,30 +88,27 @@ module.exports = {
                             {
                                 id: interaction.guild.roles.everyone.id,
                                 deny: [PermissionsBitField.Flags.ViewChannel],
-                            },
-                            {
-                                id: global.ticketGenerators.get(interaction.message.id),
+                            },{
+                                id: ticketFactoryData.ticketManagers.get(interaction.customId)[0], // could ping multiple roles, just ping one.
                                 allow: [PermissionsBitField.Flags.ViewChannel],
-                            },
+                            }
                         ],
                     });
                 }
                 const channel = await category.children.create({
-                    name: interaction.member.user.username + "'s regear'",
+                    name: interaction.member.nickname + "'s regear'",
                     type: ChannelType.GuildText,
                     permissionOverwrites: [
                         {
                             id: interaction.guild.roles.everyone.id,
                             deny: [PermissionsBitField.Flags.ViewChannel],
-                        },
-                        {
+                        }, {
                             id: interaction.user.id,
                             allow: [PermissionsBitField.Flags.ViewChannel],
-                        },
-                        {
-                            id: global.ticketGenerators.get(interaction.message.id),
+                        }, {
+                            id: ticketFactoryData.ticketManagers.get(interaction.customId)[0], // could ping multiple roles, just ping one.
                             allow: [PermissionsBitField.Flags.ViewChannel],
-                        },
+                        }
                     ],
                 })
 
@@ -127,13 +130,15 @@ module.exports = {
                 
                 await channel.send({ embeds: [applicationEmbed], components: [row] });
                 await channel.send("<@" + interaction.member.user.id + ">");
-                if (!(global.ticketGenerators.get(interaction.message.id) === undefined)) {
-                    await channel.send("<@&" + global.ticketGenerators.get(interaction.message.id) + ">");
+                if (!(guildData.ticketFactories.get(interaction.message.id) === undefined)) {
+                    await channel.send("<@&" + ticketFactoryData.ticketManagers.get(interaction.customId) + ">");
                 }
             }
 
             if (interaction.customId == 'close ticket') {
-                await interaction.channel.delete();
+                setTimeout(async () => {
+                    await interaction.channel.delete();
+                }, 1000)
             }
             return;
         }

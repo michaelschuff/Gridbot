@@ -1,12 +1,14 @@
 const { Events } = require('discord.js');
-const { SaveGlobals} = require("./../Global.js");
+const { SaveData, getGuildData, setGuildData } = require("./../database/loader.js");
 
 module.exports = {
 	name: Events.MessageDelete,
 	async execute(message) {
-        if (!(global.ticketGenerators.get(message.id) === undefined)) {
-            global.ticketGenerators.delete(message.id)
+        var guildData = getGuildData(channel.guild.id);
+        if (!(guildData.ticketGenerators.get(message.id) === undefined)) {
+            guildData.ticketGenerators.delete(message.id)
         }
-        SaveGlobals();
+        setGuildData(message.guild.id, guildData);
+        SaveData();
 	},
 };

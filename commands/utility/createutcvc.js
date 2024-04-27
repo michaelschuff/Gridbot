@@ -1,48 +1,39 @@
 const { SlashCommandBuilder, PermissionFlagsBits, ChannelType, PermissionsBitField  } = require('discord.js');
-const { SaveGlobals } = require('./../../Global.js')
+const { SaveData, getGuildData, setGuildData } = require("./../../database/loader.js");
 
 module.exports = {
     emoji: '🔈',
     data: new SlashCommandBuilder()
-      .setName('createutcvc')
-      .setDescription('This command creates a locked voice channel that displays the current UTC time.')
-      .setDefaultMemberPermissions(PermissionFlagsBits.Administrator) // only admins can use this command
-      .setDMPermission(false), // cant create voice chats in dms
+        .setName('createutcvc')
+        .setDescription('This command creates a locked voice channel that displays the current UTC time.')
+        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator) // only admins can use this command
+        .setDMPermission(false), // cant create voice chats in dms
     async execute(interaction) {
-      // Discord only gives us 3 seconds to acknowledge an interaction before
-      // the interaction gets voided and can't be used anymore.
-      await interaction.reply({
-        content: '🫡',
-      });
+        await interaction.reply({
+            content: '🫡',
+            ephemeral: true
+        });
+        try {
+            const currentTime = new Date().toUTCString().substring(17,22);
+            var guildData = getGuildData(interaction.guild.id);
+            
 
-      try {
-        const currentTime = new Date().toUTCString().substring(17,22)
-  
-        if (global.utcVCs.get(interaction.guild.id) === undefined) {
-          global.utcVCs.set(interaction.guild.id, [])
-          SaveGlobals();
-      }
+            const channel = await interaction.guild.channels.create({
+                name: currentTime + " UTC", // The name of the channel
+                type: ChannelType.GuildVoice,
+                permissionOverwrites: [
+                    {
+                        id: interaction.guild.roles.everyone,
+                        deny: [PermissionsBitField.Flags.Connect],
+                    }
+                ],
+            });
+            guildData.utcVCs.push(channel.id);
+            setGuildData(interaction.guild.id, guildData);
+            SaveData();
+        } catch (error) {
+            console.log(error);
+        }
         
-        var newChannels = global.utcVCs.get(interaction.guild.id) 
-        const newCh = await interaction.guild.channels.create({
-          name: currentTime + " UTC", // The name of the channel
-          type: ChannelType.GuildVoice,
-          permissionOverwrites: [
-            {
-              id: interaction.guild.roles.everyone,
-              deny: [PermissionsBitField.Flags.Connect],
-            }
-         ],
-        });
-        newChannels.push(newCh)
-        global.utcVCs.set(interaction.guild.id, newChannels);
-        SaveGlobals();
-      } catch (error) {
-        console.log(error);
-        await interaction.editReply({
-          content:
-          'Could not create UTC channel, double check that bot has the correct permissions.',
-        });
-      }
     },
 };

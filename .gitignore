@@ -3,3 +3,5 @@ config.json
 global.json
 global_dev.json
 .DS_Store
+DEVdb.json
+db.json

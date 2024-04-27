@@ -1,53 +1,29 @@
 const { Events } = require('discord.js');
-const { SaveGlobals} = require("./../Global.js");
+const { SaveData, getGuildData, setGuildData } = require("./../database/loader.js");
 
 module.exports = {
 	name: Events.ChannelDelete,
 	async execute(channel) {
+        var guildData = getGuildData(channel.guild.id);
 
-        if (!(global.utcVCs.get(channel.guild.id) === undefined)) {
-            if (global.utcVCs.get(channel.guild.id).includes(channel)) {
-                global.utcVCs.get(channel.guild.id)
-                var channels = global.utcVCs.get(channel.guild.id)
-    
-                const index = channels.indexOf(channel);
 
-                channels.splice(index, 1);
-                
-    
-                global.utcVCs.set(channel.guild.id, channels)
-            } 
-        }
-        
-        if (!(global.VCGenerators.get(channel.guild.id) === undefined)) {
-            if (global.VCGenerators.get(channel.guild.id).includes(channel)) {
-                global.VCGenerators.get(channel.guild.id)
-                var channels = global.VCGenerators.get(channel.guild.id)
-    
-                const index = channels.indexOf(channel);
-    
-                channels.splice(index, 1);
-    
-                global.VCGenerators.set(channel.guild.id, channels)
-            } 
-        }
-        
-        
-        if (!(global.tempVCs.get(channel.guild.id) === undefined)) {
-            if (global.tempVCs.get(channel.guild.id).includes(channel)) {
-                global.tempVCs.get(channel.guild.id)
-                var channels = global.tempVCs.get(channel.guild.id)
-    
-                const index = channels.indexOf(channel);
-    
-                channels.splice(index, 1);
-    
-                global.tempVCs.set(channel.guild.id, channels)
-            }
+        var index = guildData.utcVCs.indexOf(channel.id);
+        if (index != -1) {
+            guildData.utcVCs.splice(index, 1);
         }
 
-        SaveGlobals();
+        index = guildData.VCFactories.indexOf(channel.id);
+        if (index != -1) {
+            guildData.VCFactories.splice(index, 1);
+        }
 
-		
+        index = guildData.tempVCs.indexOf(channel.id);
+        if (index != -1) {
+            guildData.tempVCs.splice(index, 1);
+        }
+
+        setGuildData(channel.guild.id, guildData);
+
+        SaveData();
 	},
 };

@@ -2,7 +2,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { Client, Collection, GatewayIntentBits } = require('discord.js');
 const { devToken, prodToken } = require('./config.json');
-const { replacer, reviver, SaveGlobals} = require("./Global.js");
+const { replacer, reviver, SaveData} = require("./database/loader.js");
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates] });
 
@@ -37,38 +37,31 @@ for (const file of eventFiles) {
 	}
 }
 
-
-fs.readFile(process.env.DEBUG == "true" ? "global_dev.json" : "global.json", (error, data) => {
+fs.readFile(process.env.DEBUG == "true" ? "DEVdb.json" : "db.json", (error, data) => {
     if (error) {
-        global.utcVCs = new Map()
-        global.VCGenerators = new Map()
-        global.tempVCs = new Map()
-        global.ticketGenerators = new Map()
-        console.log("Could not read persistant data file: " + process.env.DEBUG == "true" ? "global_dev.json" : "global.json")
+        global.data = new Map();
+        console.log("Could not read persistant data file: " + (process.env.DEBUG == "true" ? "DEVdb.json" : "db.json"))
     } else {
         const parsedData = JSON.parse(data, reviver);
-
-        global.utcVCs = parsedData.utcVCs === undefined ? new Map() : parsedData.utcVCs;
-        global.VCGenerators = parsedData.VCGenerators === undefined ? new Map() : parsedData.VCGenerators;
-        global.tempVCs = parsedData.tempVCs === undefined ? new Map() : parsedData.tempVCs;
-        global.ticketGenerators = parsedData.ticketGenerators === undefined ? new Map() : parsedData.ticketGenerators;
-        SaveGlobals();
+        global.data = parsedData === undefined ? new Map() : parsedData;
+        
     }
     
 })
 
 process.env.DEBUG == "true" ? client.login(devToken) : client.login(prodToken);
 
-async function update() {
+async function updateUTCTimers() {
     const currentTime = new Date().toUTCString().substring(17,22)
-    for (guild of global.utcVCs.entries()) {
-        for (channel of guild[1]) {
-            const g = await client.guilds.fetch(guild[0])
-            const ch = await(g.channels.fetch(channel.id))
-            ch.setName(currentTime + " UTC")
-        }
-    }
 
-    SaveGlobals()
+	global.data.forEach(async function(guildData, guildId, map) {
+		const guild = await client.guilds.fetch(guildId)
+		guildData.utcVCs.forEach(async function(id){
+            const ch = await guild.channels.fetch(id)
+            ch.setName(currentTime + " UTC")
+		})
+	})
+
+    SaveData()
 }
-setInterval(update, 5*60*1000); // 5 minutes worth of milliseconds
+setInterval(updateUTCTimers, 5*60*1000); // 5 minutes worth of milliseconds
