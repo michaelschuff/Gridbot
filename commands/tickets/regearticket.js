@@ -17,6 +17,15 @@ module.exports = {
             ephemeral: true
         });
         const role = interaction.options.getRole('role');
+        var guildData = getGuildData(interaction.guild.id);
+        
+        if (guildData.commandLogId != -1) {
+            const channel = await interaction.guild.channels.fetch(guildData.commandLogId);
+            channel.send(interaction.member.displayName + " used /regearticketgen " + role);
+        }
+
+
+        
         const regearButton = new ButtonBuilder()
             .setCustomId('regear request')
             .setLabel('Request Regear')
@@ -41,7 +50,6 @@ module.exports = {
         newMap.set("id", this.id);
         newMap.set("ticketManagers",buttonMap);
 
-        var guildData = getGuildData(interaction.guild.id);
         guildData.ticketFactories.set(message.id, new TicketFactoryData(newMap))
         setGuildData(interaction.guild.id, guildData);
         

@@ -4,9 +4,17 @@ const { SaveData, getGuildData, setGuildData } = require("./../database/loader.j
 module.exports = {
 	name: Events.VoiceStateUpdate,
 	async execute(oldState, newState) {
+        var guildData = null;
+        if (oldState != null) {
+            guildData = getGuildData(oldState.guild.id);
+        }
+
+        if (newState != null) {
+            guildData = getGuildData(newState.guild.id);
+        }
+
         if (newState.channelId != oldState.channelId) {
             if (oldState.channelId != null) {
-                var guildData = getGuildData(oldState.guild.id);
                 
                 const index = guildData.tempVCs.indexOf(oldState.channelId);
                 if (index != -1) {
@@ -28,7 +36,6 @@ module.exports = {
                 }
             } 
             if (newState.channelId != null) {
-                var guildData = getGuildData(newState.guild.id);
 
                 const index = guildData.VCFactories.indexOf(newState.channelId);
                 if (index != -1) {
@@ -42,6 +49,26 @@ module.exports = {
                     guildData.tempVCs.push(channel.id)
                     setGuildData(newState.guild.id, guildData)                
                     SaveData();
+                }
+            }
+
+
+
+            if (guildData.VCLogId != -1) {
+                if (newState.channelId == null && oldState.channelId != null) {
+                    const channel = await oldState.guild.channels.fetch(guildData.VCLogId);
+                    channel.send(oldState.member.displayName + " left " + oldState.channel.name);
+                }
+
+                if (newState.channelId != null && oldState.channelId == null) {
+                    const channel = await newState.guild.channels.fetch(guildData.VCLogId);
+                    channel.send(newState.member.displayName + " joined " + newState.channel.name);
+                }
+
+
+                if (newState.channelId != null && oldState.channelId != null) {
+                    const channel = await oldState.guild.channels.fetch(guildData.VCLogId);
+                    channel.send(oldState.member.displayName + " moved from " + oldState.channel.name + " to " + newState.channel.name);
                 }
             }
         }

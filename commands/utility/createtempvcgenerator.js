@@ -21,19 +21,20 @@ module.exports = {
         });
 
         const name = interaction.options.getString('name');
-
-        try {
-            var guildData = getGuildData(interaction.guild.id);
-            const channel = await interaction.guild.channels.create({
-                name: name, // The name of the channel
-                type: ChannelType.GuildVoice
-            });
-            guildData.VCFactories.push(channel.id);
-
-            setGuildData(interaction.guild.id, guildData);
-            SaveData();
-        } catch (error) {
-            console.log(error);
+        
+        var guildData = getGuildData(interaction.guild.id);
+        if (guildData.commandLogId != -1) {
+            const channel = await interaction.guild.channels.fetch(guildData.commandLogId);
+            channel.send(interaction.member.displayName + " used /createtempvcgenerator " + name);
         }
+
+        const channel = await interaction.guild.channels.create({
+            name: name, // The name of the channel
+            type: ChannelType.GuildVoice
+        });
+        guildData.VCFactories.push(channel.id);
+
+        setGuildData(interaction.guild.id, guildData);
+        SaveData();
     },
 };

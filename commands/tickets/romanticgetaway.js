@@ -20,36 +20,33 @@ module.exports = {
         });
         const so = interaction.options.getUser('so');
 
-        try {
-            var guildData = getGuildData(interaction.guild.id);
-
-            const channel = await interaction.guild.channels.create({
-                name: "Paradise Island", // The name of the channel
-                type: ChannelType.GuildVoice,
-                permissionOverwrites: [
-                    {
-                        id: interaction.guild.roles.everyone,
-                        deny: [PermissionsBitField.Flags.ViewChannel],
-                    }, {
-                        id: interaction.member.user.id,
-                        allow: [PermissionsBitField.Flags.ViewChannel],
-                    }, {
-                        id: so.id,
-                        allow: [PermissionsBitField.Flags.ViewChannel],
-                    }
-                ],
-                parent: interaction.channel.parent,
-            });
-            guildData.tempVCs.push(channel.id);
-            setGuildData(interaction.guild.id, guildData);
-            
-            SaveData();
-        } catch (error) {
-            console.log(error);
-            await interaction.editReply({
-                content:
-                'Could not create romantic getaway channel, double check that bot has the correct permissions.',
-            });
+        var guildData = getGuildData(interaction.guild.id);
+        
+        if (guildData.commandLogId != -1) {
+            const channel = await interaction.guild.channels.fetch(guildData.commandLogId);
+            channel.send(interaction.member.displayName + " used /romanticgetaway " + so.displayName);
         }
+
+        const channel = await interaction.guild.channels.create({
+            name: "Paradise Island", // The name of the channel
+            type: ChannelType.GuildVoice,
+            permissionOverwrites: [
+                {
+                    id: interaction.guild.roles.everyone,
+                    deny: [PermissionsBitField.Flags.ViewChannel],
+                }, {
+                    id: interaction.member.user.id,
+                    allow: [PermissionsBitField.Flags.ViewChannel],
+                }, {
+                    id: so.id,
+                    allow: [PermissionsBitField.Flags.ViewChannel],
+                }
+            ],
+            parent: interaction.channel.parent,
+        });
+        guildData.tempVCs.push(channel.id);
+        setGuildData(interaction.guild.id, guildData);
+        
+        SaveData();
     },
 };

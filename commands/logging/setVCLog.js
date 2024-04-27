@@ -3,8 +3,8 @@ const { SaveData, getGuildData, setGuildData } = require("./../../database/loade
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('setmessagelog')
-        .setDescription('Set a channel to log messages, deleted messages, and edit history')
+        .setName('setvclog')
+        .setDescription('Set a channel to log voice chat history')
         .setDefaultMemberPermissions(PermissionFlagsBits.Administrator) // only admins can use this command
         .setDMPermission(false) // cant create voice chats in dms
         .addChannelOption(option => option
@@ -20,9 +20,9 @@ module.exports = {
         var guildData = getGuildData(interaction.guild.id);
         if (guildData.commandLogId != -1) {
             const channel = await interaction.guild.channels.fetch(guildData.commandLogId);
-            channel.send(interaction.member.displayName + " used /setmessagelog " + channel.id);
+            channel.send(interaction.member.displayName + " used /setvclog " + channel.id);
         }
-        guildData.setMessageLogId(channel.id);
+        guildData.setVCLogId(channel.id);
         setGuildData(interaction.guildId, guildData);
         SaveData();
     }
