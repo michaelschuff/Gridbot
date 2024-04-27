@@ -22,6 +22,16 @@ module.exports = {
             guildData.tempVCs.splice(index, 1);
         }
 
+        if (channel.id == guildData.commandLogId) {
+            guildData.commandLogId = -1;
+        }
+        if (channel.id == guildData.messageLogId) {
+            guildData.messageLogId = -1;
+        }
+        if (channel.id == guildData.VCLogId) {
+            guildData.VCLogId = -1;
+        }
+
         setGuildData(channel.guild.id, guildData);
 
         SaveData();
