@@ -8,7 +8,7 @@ module.exports = {
         
         if (guildData.messageLogId != -1) {
             const channel = await message.guild.channels.fetch(guildData.messageLogId);
-            channel.send(message.member.displayName + " deleted \"" + message.content + "\" in " + message.channel.name);
+            channel.send(message.author.username + " deleted \"" + message.content + "\" in " + message.channel.name);
         }
 
         if (!(guildData.ticketFactories.get(message.id) === undefined)) {

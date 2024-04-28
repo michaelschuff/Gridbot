@@ -8,7 +8,7 @@ module.exports = {
         console.log("hi")
         if (guildData.messageLogId != -1) {
             const channel = await oldMessage.guild.channels.fetch(guildData.messageLogId);
-            channel.send(oldMessage.member.displayName + " edited \"" + oldMessage.content + "\" to \"" + newMessage.content + "\" in " + oldMessage.channel.name);
+            channel.send(oldMessage.author.username + " edited \"" + oldMessage.content + "\" to \"" + newMessage.content + "\" in " + oldMessage.channel.name);
         }
 
 	},
