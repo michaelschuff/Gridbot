@@ -17,14 +17,14 @@ module.exports = {
         
         if (guildData.commandLogId != -1) {
             const channel = await interaction.guild.channels.fetch(guildData.commandLogId);
-            channel.send(interaction.member.displayName + " used /regearticketgen " + role);
+            channel.send(interaction.member.displayName + " used /lootplitticketgen");
         }
 
 
         
         const regearButton = new ButtonBuilder()
-            .setCustomId('regear request')
-            .setLabel('Request Regear')
+            .setCustomId('lootsplit request')
+            .setLabel('Loot Split Request')
             .setStyle(ButtonStyle.Primary);
         
         const row = new ActionRowBuilder()
@@ -33,18 +33,18 @@ module.exports = {
 
         const applicationEmbed = new EmbedBuilder()
             .setColor(0xFFA500)
-            .setTitle('Open a ticket to request your regear')
+            .setTitle('Open a ticket to request a loot split')
             .setDescription('Click the button to open a ticket')
         
         
         const message = await interaction.channel.send({ embeds: [applicationEmbed], components: [row] });
 
         var buttonMap = new Map();
-        buttonMap.set('regear request', [role.id])
+        buttonMap.set('lootsplit request', [guildData.lootSplitOfficerRoleName]);
 
         var newMap = new Map();
         newMap.set("id", this.id);
-        newMap.set("ticketManagers",buttonMap);
+        newMap.set("ticketManagers", buttonMap);
 
         guildData.ticketFactories.set(message.id, new TicketFactoryData(newMap))
         setGuildData(interaction.guild.id, guildData);

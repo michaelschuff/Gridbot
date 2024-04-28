@@ -136,6 +136,74 @@ module.exports = {
                 }
             }
 
+            if (interaction.customId == 'lootsplit request') {
+                await interaction.reply({
+                    content: '🫡',
+                    ephemeral: true
+                });
+
+                var guildData = getGuildData(interaction.guild.id);
+
+                const ticketFactoryData = guildData.ticketFactories.get(interaction.message.id);
+                var category = interaction.guild.channels.cache.find(channel => channel.type == ChannelType.GuildCategory && channel.name == "lootsplits");
+                let role = interaction.guild.roles.cache.find(r => r.name == ticketFactoryData.ticketManagers.get(interaction.customId)[0]);
+                // console.log(role)
+                if (!category) {
+                    category = await interaction.guild.channels.create({
+                        name: "lootsplits", 
+                        type: ChannelType.GuildCategory,
+                        permissionOverwrites: [
+                            {
+                                id: interaction.guild.roles.everyone.id,
+                                deny: [PermissionsBitField.Flags.ViewChannel],
+                            },{
+                                id: role.id, // could ping multiple roles, just ping one.
+                                allow: [PermissionsBitField.Flags.ViewChannel],
+                            }
+                        ],
+                    });
+                }
+                
+                const channel = await category.children.create({
+                    name: interaction.member.displayName + "'s lootsplit request",
+                    type: ChannelType.GuildText,
+                    permissionOverwrites: [
+                        {
+                            id: interaction.guild.roles.everyone.id,
+                            deny: [PermissionsBitField.Flags.ViewChannel],
+                        }, {
+                            id: interaction.user.id,
+                            allow: [PermissionsBitField.Flags.ViewChannel],
+                        }, {
+                            id: role.id, // could ping multiple roles, just ping one.
+                            allow: [PermissionsBitField.Flags.ViewChannel],
+                        }
+                    ],
+                })
+
+
+                const applyButton = new ButtonBuilder()
+                    .setCustomId('close ticket')
+                    .setLabel('Close Ticket')
+                    .setStyle(ButtonStyle.Danger);
+                
+                const row = new ActionRowBuilder()
+                    .addComponents(applyButton);
+
+
+                const applicationEmbed = new EmbedBuilder()
+                    .setColor(0xFFA500)
+                    .setTitle('Please post the following to request your lootsplit')
+                    .setDescription('- A screenshot of each party involved\n- The value of the chest loot\n- The cost to repair the gear\n- The amount of silver bags.')
+                
+                
+                await channel.send({ embeds: [applicationEmbed], components: [row] });
+                await channel.send("<@" + interaction.member.user.id + ">");
+                if (!(guildData.ticketFactories.get(interaction.message.id) === undefined)) {
+                    await channel.send("<@&" + role.id + ">");
+                }
+            }
+
             if (interaction.customId == 'close ticket') {
                 setTimeout(async () => {
                     await interaction.channel.delete();
