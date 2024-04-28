@@ -24,7 +24,7 @@ module.exports = {
             
             if (guildData.commandLogId != -1) {
                 const channel = await interaction.guild.channels.fetch(guildData.commandLogId);
-                channel.send(interaction.member.displayName + " used /deposit " + user + " " + amount);
+                channel.send(interaction.member.displayName + " used /deposit " + user.displayName + " " + amount);
             }
 
 

@@ -38,6 +38,14 @@ module.exports = {
             const silverBags = interaction.options.getInteger('silver_bags') ?? 0;
             const afterBagsValue = afterRepairValue + silverBags;
             var participants = interaction.options.getString('participants');
+
+
+            if (guildData.commandLogId != -1) {
+                const channel = await interaction.guild.channels.fetch(guildData.commandLogId);
+                channel.send(interaction.member.displayName + ` used /lootsplit ${chest_value} ${repair_cost} ${silver_bags} ${participants}`);
+            }
+
+
             participants = participants.replace(/\s/g,'');
             participants = participants.substring(1, participants.length - 1);
             participants = participants.split('><');

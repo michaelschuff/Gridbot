@@ -23,7 +23,7 @@ module.exports = {
             
             if (guildData.commandLogId != -1) {
                 const channel = await interaction.guild.channels.fetch(guildData.commandLogId);
-                channel.send(interaction.member.displayName + " used /withdraw " + user + " " + amount);
+                channel.send(interaction.member.displayName + " used /withdraw " + user.displayName + " " + amount);
             }
 
 
