@@ -6,11 +6,12 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('romanticgetaway')
         .setDescription('Creates a private voice chat that only allows two people to join')
+        .setDMPermission(false)
         .addUserOption(option => option
             .setName('so')
 			.setDescription('Who is allowed to join')
-            .setRequired(true))
-            .setDMPermission(false), // cant create voice chats in dms
+            .setRequired(true)
+        ), // cant create voice chats in dms
     async execute(interaction) {
         // Discord only gives us 3 seconds to acknowledge an interaction before
         // the interaction gets voided and can't be used anymore.

@@ -10,7 +10,8 @@ module.exports = {
         .setDMPermission(false) // cant create voice chats in dms
         .addRoleOption(option => option
             .setName('role')
-            .setDescription('What role handles these tickets?')),
+            .setDescription('What role handles these tickets?')
+        ),
     async execute(interaction) {
         await interaction.reply({
             content: '🫡',

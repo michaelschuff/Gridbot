@@ -10,6 +10,8 @@ class GuildData {
             this.commandLogId = -1;
             this.messageLogId = -1;
             this.VCLogId = -1;
+            this.userBalances = new Map();
+            this.lootSplitOfficerRoleName = "";
         } else {
             const id = map.get("id");
             const utcVCs = map.get("utcVCs");
@@ -19,6 +21,8 @@ class GuildData {
             const commandLogId = map.get("commandLogId");
             const messageLogId = map.get("messageLogId");
             const VCLogId = map.get("VCLogId");
+            const userBalances = map.get("userBalances");
+            const lootSplitOfficerRoleName = map.get("lootSplitOfficerRoleName");
 
             this.id = id === undefined ? -1 : id;
             this.utcVCs = utcVCs === undefined ? [] : utcVCs;
@@ -28,7 +32,37 @@ class GuildData {
             this.commandLogId = commandLogId === undefined ? -1 : commandLogId;
             this.messageLogId = messageLogId === undefined ? -1 : messageLogId;
             this.VCLogId = VCLogId === undefined ? -1 : VCLogId;
+            this.userBalances = userBalances === undefined ? new Map() : userBalances;
+            this.lootSplitOfficerRoleName = lootSplitOfficerRoleName === undefined ? -1 : lootSplitOfficerRoleName;
         }
+    }
+
+    depositUserSilver(userid, silver) {
+        if (this.userBalances.get(userid) === undefined) {
+            this.userBalances.set(userid,0);
+        }
+
+        const currentBalance =  this.userBalances.get(userid);
+        this.userBalances.set(userid, currentBalance + silver);
+    }
+
+
+    withdrawUserSilver(userid, silver) {
+        this.depositUserSilver(userid, -silver);
+    }
+
+
+    transferSilver(payerid, receiverid, silver) {
+        this.depositUserSilver(receiverid, silver);
+        this.depositUserSilver(payerid, -silver);
+    }
+
+
+    getUserBalance(userid) {
+        if (this.userBalances.get(userid) === undefined) {
+            this.userBalances.set(userid,0);
+        }
+        return this.userBalances.get(userid);
     }
 
     setCommandLogId(id) {
@@ -41,6 +75,10 @@ class GuildData {
 
     setVCLogId(id) {
         this.VCLogId = id;
+    }
+
+    setLootSplitOfficerRoleName(name) {
+        this.lootSplitOfficerRoleName = name;
     }
 
     print() {
@@ -56,6 +94,8 @@ class GuildData {
                 "\ncommandLogId: " + this.commandLogId + 
                 "\nmessageLogId: " + this.messageLogId + 
                 "\nVCLogId: " + this.VCLogId + 
+                "\nuserBalances: " + this.userBalances + 
+                "\nlootSplitOfficerRoleName: " + this.lootSplitOfficerRoleName + 
                 "\n";
     }
 
@@ -76,6 +116,8 @@ class GuildData {
         ret.set("commandLogId", this.commandLogId);
         ret.set("messageLogId", this.messageLogId);
         ret.set("VCLogId", this.VCLogId);
+        ret.set("userBalances", this.userBalances);
+        ret.set("lootSplitOfficerRoleName", this.lootSplitOfficerRoleName);
         return ret;
     }
 

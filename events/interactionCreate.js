@@ -31,7 +31,7 @@ module.exports = {
                     });
                 }
                 const channel = await category.children.create({
-                    name: interaction.member.nickname + "'s application'",
+                    name: interaction.member.displayName + "'s application'",
                     type: ChannelType.GuildText,
                     permissionOverwrites: [
                         {
@@ -95,8 +95,9 @@ module.exports = {
                         ],
                     });
                 }
+                
                 const channel = await category.children.create({
-                    name: interaction.member.nickname + "'s regear'",
+                    name: interaction.member.displayName + "'s regear'",
                     type: ChannelType.GuildText,
                     permissionOverwrites: [
                         {

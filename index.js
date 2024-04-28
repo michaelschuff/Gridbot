@@ -4,7 +4,15 @@ const { Client, Collection, GatewayIntentBits, GatewayCloseCodes } = require('di
 const { devToken, prodToken } = require('./config.json');
 const { replacer, reviver, SaveData} = require("./database/loader.js");
 
-const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildModeration] });
+const client = new Client({ 
+	intents: [
+		GatewayIntentBits.Guilds,
+		GatewayIntentBits.GuildVoiceStates,
+		GatewayIntentBits.GuildMessages,
+		GatewayIntentBits.MessageContent,
+		GatewayIntentBits.GuildModeration
+	]
+});
 
 client.commands = new Collection();
 const foldersPath = path.join(__dirname, 'commands');

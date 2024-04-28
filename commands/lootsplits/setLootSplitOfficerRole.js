@@ -1,16 +1,15 @@
-const { SlashCommandBuilder, PermissionFlagsBits, ChannelType } = require('discord.js');
+const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 const { SaveData, getGuildData, setGuildData } = require("./../../database/loader.js");
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('setcommandlog')
+        .setName('setlootsplitofficerrole')
         .setDescription('Set a channel to log commands')
         .setDefaultMemberPermissions(PermissionFlagsBits.Administrator) // only admins can use this command
         .setDMPermission(false) // cant create voice chats in dms
-        .addChannelOption(option => option
-            .setName('channel')
-            .setDescription('Where should logs appear?')
-            .addChannelTypes(ChannelType.GuildText)
+        .addRoleOption(option => option
+            .setName('role')
+            .setDescription('What role is allowed to do lootsplit commands?')
             .setRequired(true)
         ),
     async execute(interaction) {
@@ -18,12 +17,14 @@ module.exports = {
             content: '🫡',
             ephemeral: true
         });
-        const channel = interaction.options.getChannel('channel');
-        
-        channel.send(interaction.member.displayName + " used /setcommandlog " + channel.name);
+        const role = interaction.options.getRole('role');
         
         var guildData = getGuildData(interaction.guild.id);
-        guildData.setCommandLogId(channel.id);
+        if (guildData.commandLogId != -1) {
+            const channel = await interaction.guild.channels.fetch(guildData.commandLogId);
+            channel.send(interaction.member.displayName + " used /setlootsplitofficerrole " + role.name);
+        }
+        guildData.setLootSplitOfficerRoleName(role.name);
         setGuildData(interaction.guildId, guildData);
         SaveData();
     }
