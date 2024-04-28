@@ -15,13 +15,20 @@ module.exports = {
             }
             const balances = guildData.userBalances;
             var str = ``;
-            balances.forEach((value, key, map) => {
-                str += `<@${key}>:  ${value}\n`;
-            })
-            const reply = await interaction.reply({
-                content: str,
-                ephemeral: true
-            });
+            if (balances.size != 0) {
+                balances.forEach((value, key, map) => {
+                    str += `<@${key}>:  ${value}\n`;
+                })
+                const reply = await interaction.reply({
+                    content: str,
+                    ephemeral: true
+                });
+            } else {
+                const reply = await interaction.reply({
+                    content: 'No one has a balance',
+                    ephemeral: true
+                });
+            }
             
             // setGuildData(interaction.guildId, guildData);
             // SaveData();

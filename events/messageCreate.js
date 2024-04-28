@@ -8,7 +8,7 @@ module.exports = {
         if (guildData.messageLogId != -1) {
             if (message.channelId != guildData.messageLogId) { // dont log the logged messages
                 const channel = await message.guild.channels.fetch(guildData.messageLogId);
-                channel.send(message.member.displayName + " sent \"" + message.content + "\" in " + message.channel.name);
+                channel.send(message.member.name + " sent \"" + message.content + "\" in " + message.channel.name);
             }
         }
 	},

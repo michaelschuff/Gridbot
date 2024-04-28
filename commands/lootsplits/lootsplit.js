@@ -60,7 +60,7 @@ module.exports = {
                             `after repair value: ${afterRepairValue}\n` + 
                             `silver bags:        ${silverBags}\n` + 
                             `after bags value:   ${afterBagsValue}\n` + 
-                            `number of gamers:   ${numGamers}` + 
+                            `number of gamers:   ${numGamers}\n` + 
                             `gamer split:        ${gamerSplit}\n\`\`\``;
             await interaction.reply({
                 content: spltmsg,
