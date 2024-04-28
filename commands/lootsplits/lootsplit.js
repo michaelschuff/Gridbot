@@ -42,7 +42,7 @@ module.exports = {
 
             if (guildData.commandLogId != -1) {
                 const channel = await interaction.guild.channels.fetch(guildData.commandLogId);
-                channel.send(interaction.member.displayName + ` used /lootsplit ${chest_value} ${repair_cost} ${silver_bags} ${participants}`);
+                channel.send(interaction.member.displayName + ` used /lootsplit ${chestValue} ${repairCost} ${silverBags} ${participants}`);
             }
 
 
