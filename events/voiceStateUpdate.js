@@ -55,18 +55,18 @@ module.exports = {
 
 
             if (guildData.VCLogId != -1) {
-                if (newState.channelId == null && oldState.channelId != null) {
+                if (newState.channel == null && oldState.channel != null) {
                     const channel = await oldState.guild.channels.fetch(guildData.VCLogId);
                     channel.send(oldState.member.displayName + " left " + oldState.channel.name);
                 }
 
-                if (newState.channelId != null && oldState.channelId == null) {
+                if (newState.channel != null && oldState.channel == null) {
                     const channel = await newState.guild.channels.fetch(guildData.VCLogId);
                     channel.send(newState.member.displayName + " joined " + newState.channel.name);
                 }
 
 
-                if (newState.channelId != null && oldState.channelId != null) {
+                if (newState.channel != null && oldState.channel != null) {
                     const channel = await oldState.guild.channels.fetch(guildData.VCLogId);
                     channel.send(oldState.member.displayName + " moved from " + oldState.channel.name + " to " + newState.channel.name);
                 }
