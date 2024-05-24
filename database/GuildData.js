@@ -12,6 +12,7 @@ class GuildData {
             this.VCLogId = -1;
             this.userBalances = new Map();
             this.lootSplitOfficerRoleName = "";
+            this.memberRoleId = "";
         } else {
             const id = map.get("id");
             const utcVCs = map.get("utcVCs");
@@ -23,6 +24,7 @@ class GuildData {
             const VCLogId = map.get("VCLogId");
             const userBalances = map.get("userBalances");
             const lootSplitOfficerRoleName = map.get("lootSplitOfficerRoleName");
+            const memberRoleId = map.get("memberRoleId");
 
             this.id = id === undefined ? -1 : id;
             this.utcVCs = utcVCs === undefined ? [] : utcVCs;
@@ -34,6 +36,7 @@ class GuildData {
             this.VCLogId = VCLogId === undefined ? -1 : VCLogId;
             this.userBalances = userBalances === undefined ? new Map() : userBalances;
             this.lootSplitOfficerRoleName = lootSplitOfficerRoleName === undefined ? -1 : lootSplitOfficerRoleName;
+            this.memberRoleId = memberRoleId === undefined ? -1 : memberRoleId;
         }
     }
 
@@ -81,6 +84,10 @@ class GuildData {
         this.lootSplitOfficerRoleName = name;
     }
 
+    setMemberRoleId(name) {
+        this.memberRoleId = name;
+    }
+
     print() {
         console.log(this.toString());
     }
@@ -96,6 +103,7 @@ class GuildData {
                 "\nVCLogId: " + this.VCLogId + 
                 "\nuserBalances: " + this.userBalances + 
                 "\nlootSplitOfficerRoleName: " + this.lootSplitOfficerRoleName + 
+                "\nmemberRoleId: " + this.memberRoleId + 
                 "\n";
     }
 
@@ -118,6 +126,7 @@ class GuildData {
         ret.set("VCLogId", this.VCLogId);
         ret.set("userBalances", this.userBalances);
         ret.set("lootSplitOfficerRoleName", this.lootSplitOfficerRoleName);
+        ret.set("memberRoleId", this.memberRoleId);
         return ret;
     }
 
