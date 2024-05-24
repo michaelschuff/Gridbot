@@ -180,8 +180,6 @@ module.exports = {
                         }, {
                             id: guildData.memberRoleId, // could ping multiple roles, just ping one.
                             allow: [PermissionsBitField.Flags.ViewChannel],
-                        }, {
-                            id: guildData.memberRoleId, // could ping multiple roles, just ping one.
                             deny: [PermissionsBitField.Flags.SendMessages],
                         }
                     ],
